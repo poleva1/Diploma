@@ -22,11 +22,34 @@ git clone https://github.com/poleva1/Diploma.git
 
 ## Структура проекта
 Проект включает в себя следующие папки и файлы:
+
 pages/ — содержит страницы для подхода Page Object Model.
+
 tests/ — содержит тесты для сайта Читай-город.
+
 test_api/ — API тесты.
+
 test_ui/ — UI тесты.
+
 settings/ — вспомогательные утилиты для работы с WebDriver.
+
 allure-results/ — папка для результатов Allure отчетов.
+
 requirements.txt — файл с зависимостями проекта.
+
 README.md — описание проекта и инструкция.
+
+## Запуск тестов 
+pytest | python -m pytest (запуск тестов) 
+
+python -m pytest -s (вывод в консоль print) 
+
+python -m pytest -v (запуск тестов с подробным выводом в консоль) 
+
+pytest -m test_ui.py (запуск только UI тестов) 
+
+python pytest -m test_api.py (запуск только API тестов) 
+
+python -m pytest --alluredir allure-result (запуск тестов и сохранение отчета о результатах тестирования) 
+
+python allure serve allure-result (формирование отчета о тестировании)

@@ -1,4 +1,3 @@
-import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -39,6 +38,10 @@ class UiPage:
         cart_icon.click()
 
     def delete_from_cart(self, book_name: str):
+        search_box = WebDriverWait(self.driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "data-chg-product-name"))
+        )
+        search_box.send_keys(book_name)
         cart_icon = WebDriverWait(self.driver, 20).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "action-button__text=['Оформить']"))
         )
