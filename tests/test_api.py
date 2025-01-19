@@ -1,13 +1,14 @@
 import pytest
 import allure
 from Diploma.Diploma.pages.api_page import ApiPage
-from settings import api_url, my_headers
+from Diploma.settings import api_url, my_headers
 
 
 api = ApiPage(api_url, my_headers)
 
 @allure.feature("Тестирование API интернет-магазина")
 @allure.title("Позитивные тесты")
+@allure.severity("blocker")
 @allure.step("Поиск книги по названию. API")
 @pytest.mark.parametrize("title, customer_city", [
     ("Дневник книготорговца", 213),
@@ -23,6 +24,7 @@ def test_search_by_title(title, customer_city):
 
 @allure.feature("Тестирование API интернет-магазина")
 @allure.title("Позитивные тесты")
+@allure.severity("blocker")
 @allure.step("Поиск книги по фамилии автора. API")
 @pytest.mark.parametrize("author_name, customer_city", [
     ("Байтелл", 213),
@@ -38,6 +40,7 @@ def test_search_by_author(author_name, customer_city):
 
 @allure.feature("Тестирование API интернет-магазина")
 @allure.title("Позитивные тесты")
+@allure.severity("blocker")
 @allure.step("Добавление книги в корзину. API")
 @pytest.mark.parametrize("book_id", [2648551, 3022703, 2893579, 2614111])
 def test_add_book(book_id):
@@ -50,6 +53,7 @@ def test_add_book(book_id):
 
 @allure.feature("Тестирование API интернет-магазина")
 @allure.title("Позитивные тесты")
+@allure.severity("blocker")
 @allure.step("Удаление книги из корзины.API")
 @pytest.mark.parametrize("book_id", [2648551, 3022703, 2893579, 2614111])
 def test_delete_from_cart(book_id):
@@ -64,6 +68,7 @@ def test_delete_from_cart(book_id):
 
 @allure.feature("Тестирование API интернет-магазина")
 @allure.title("Негативные тесты")
+@allure.severity("trivial")
 @allure.step("Пустой поиск. API")
 @pytest.mark.parametrize("title, customer_city", [
     ("", 213),

@@ -18,7 +18,8 @@ https://soulpol.yonote.ru/doc/finalnyj-proekt-po-ruchnomu-testirovaniyu-internet
 1. Клонируйте репозиторий:
 git clone https://github.com/poleva1/Diploma.git
 2. Перейдите в каталог проекта
-3. Настройте переменные окружения. Перед запуском приложения убедитесь, что у вас установлены необходимые переменные окружения.
+3. Установите все зависимости pip install -r requirements.txt
+4. Настройте переменные окружения. Перед запуском приложения убедитесь, что у вас установлены необходимые переменные окружения.
 
 ## Структура проекта
 Проект включает в себя следующие папки и файлы:
@@ -33,23 +34,21 @@ test_ui/ — UI тесты.
 
 settings/ — вспомогательные утилиты для работы с WebDriver.
 
-allure-results/ — папка для результатов Allure отчетов.
+allure-results/ — папка для результатов и отчетов Allure .
 
 requirements.txt — файл с зависимостями проекта.
 
 README.md — описание проекта и инструкция.
 
 ## Запуск тестов 
-pytest | python -m pytest (запуск тестов) 
+pytest Diploma -s -v (запуск всех тестов)
 
-python -m pytest -s (вывод в консоль print) 
+pytest Diploma/Diploma/tests/test_ui.py (запуск только UI тестов) 
 
-python -m pytest -v (запуск тестов с подробным выводом в консоль) 
+pytest Diploma/Diploma/tests/test_api.py (запуск только API тестов) 
 
-pytest -m test_ui.py (запуск только UI тестов) 
+pytest --alluredir=allure-files (запустить тесты с Allure)
 
-python pytest -m test_api.py (запуск только API тестов) 
+allure generate allure-files --clean -o allure-report (сформировать отчет о тестировании)
 
-python -m pytest --alluredir allure-result (запуск тестов и сохранение отчета о результатах тестирования) 
-
-python allure serve allure-result (формирование отчета о тестировании)
+allure open allure-report (открыть отчет о тестировании)

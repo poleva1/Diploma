@@ -1,93 +1,96 @@
 import allure
 import pytest
 from selenium import webdriver
-from selenium.webdriver.common.by import By
 from Diploma.Diploma.pages.ui_page import UiPage
-from settings import ui_url
+from Diploma.settings import ui_url
+
+@pytest.fixture(scope="function")
+def browser():
+    driver = webdriver.Chrome()
+    ui_page = UiPage(driver, ui_url)
+    yield ui_page
+    driver.quit()
 
 
 @allure.feature("Тестирование интернет-магазина")
-@allure.title("Позитивные тесты.UI")
+@allure.story("Позитивные тесты.UI")
 @allure.severity("blocker")
-@allure.step("Найти книгу по заголовку")
-@pytest.mark.parametrize("book_name", ["Кот", "1984", "python", "Сейлор Мун"])
-def test_search_by_phrase(book_name):
-    with allure.step("Запустить браузер Chrome"):
-        driver = webdriver.Chrome()
-    with allure.step("Перейти на сайт Читай-город"):
-        ui_page = UiPage(driver, ui_url)
-    with allure.step("Найти книгу по заголовку"):
-        ui_page.search_by_phrase(book_name)
-    with allure.step("Закрыть браузер"):
-        driver.quit()
+@allure.title("Найти книгу по заголовку")
+@pytest.mark.parametrize("book_name", ["Три мушкетера",
+                                       "1984",
+                                       "Умная собачка Соня"])
+def test_search_by_phrase(browser, book_name):
+    with allure.step(f"Поиск книг с названием"
+                     f" {book_name}"):
+        browser.search_by_phrase(book_name)
+
+    with allure.step(f"Книга с названием {book_name} найдена"):
+        assert book_name in browser.find_book_titles()
 
 
 @allure.feature("Тестирование интернет-магазина")
-@allure.title("Позитивные тесты.UI")
+@allure.story("Позитивные тесты.UI")
 @allure.severity("blocker")
-@allure.step("Найти книгу по автору")
-@pytest.mark.parametrize("author_name", ["Кант", "Салтыков-Щедрин", "Romain", "Федерико Гарсия Лорка"])
-def test_search_by_author(author_name):
-    with allure.step("Запустить браузер Chrome"):
-        driver = webdriver.Chrome()
-    with allure.step("Перейти на сайт Читай-город"):
-        ui_page = UiPage(driver, ui_url)
-    with allure.step("Найти книгу по автору"):
-        ui_page.search_by_author(author_name)
-    with allure.step("Закрыть браузер"):
-        driver.quit()
+@allure.title("Найти книгу по автору")
+@pytest.mark.parametrize("author_name", ["Лев Толстой",
+                                         "Сергей Довлатов",
+                                         "Agatha Christie"])
+def test_search_by_author(browser, author_name):
+    with allure.step(f"Поиск книг автора: "
+                     f" {author_name}"):
+        browser.search_by_phrase(author_name)
+
+    with allure.step(f"Книга с названием {author_name} есть в ответе"):
+        assert author_name in browser.find_book_authors()
 
 
 @allure.feature("Тестирование интернет-магазина")
-@allure.title("Позитивные тесты.UI")
+@allure.story("Позитивные тесты.UI")
 @allure.severity("blocker")
-@allure.step("Добавить книгу в корзину")
+@allure.title("Добавить книгу в корзину")
 @pytest.mark.parametrize("book_name",
-                         ["Дневник книготорговца", "трое в лодке не считая собаки", "1984", "Sailor moon", "Соня"])
-def test_add_to_cart(book_name):
-    with allure.step("Запустить браузер Chrome"):
-        driver = webdriver.Chrome()
-    with allure.step("Перейти на сайт Читай-город"):
-        ui_page = UiPage(driver, ui_url)
-    with allure.step("Получить результаты добавления в корзину"):
-        add_to_cart = driver.find_element(By.NAME, "phrase")
+                         ["Умная собачка Соня",
+                          "Три мушкетера",
+                          "Дневник книготорговца"
+])
+def test_add_to_cart(browser, book_name):
+    with allure.step("Поиск книг для добавления"):
+        browser.search_by_phrase(book_name)
+    with allure.step("Добавить книгу в корзину"):
+        browser.click_first_action_button()
+    with allure.step("Переход в корзину"):
+        browser.go_to_cart()
     with allure.step("Проверить, что корзина не пуста"):
-        assert add_to_cart is not None
-    with allure.step("Закрыть браузер"):
-        driver.quit()
+        assert browser.get_cart_item_count() > 0
 
 
 @allure.feature("Тестирование интернет-магазина")
-@allure.title("Негативные тесты.UI")
-@allure.severity("blocker")
-@allure.step("Добавить книгу в корзину с невалидным названием")
-@pytest.mark.parametrize("book_name", ["___"])
-def test_add_to_cart_negative(book_name):
-    with allure.step("Запустить браузер Chrome"):
-        driver = webdriver.Chrome()
-    with allure.step("Перейти на сайт Читай-город"):
-        ui_page = UiPage(driver, ui_url)
-    with allure.step("Получить результаты добавления в корзину"):
-        add_to_cart = driver.find_element(By.NAME, "phrase")
+@allure.story("Негативные тесты.UI")
+@allure.severity("major")
+@allure.title("Добавить книгу в корзину с невалидным названием")
+@pytest.mark.parametrize("book_name", ["$^&*", ";)"])
+def test_add_to_cart_negative(browser, book_name):
+    with allure.step("Попробовать добавить книгу с невалидным названием"):
+        browser.search_by_phrase(book_name)
     with allure.step("Проверить, что ничего не найдено"):
-        assert ui_page.cart_search() == "Похоже, у нас такого нет"
-    with allure.step("Закрыть браузер"):
-        driver.quit()
+        assert browser.check_empty_result() == "Похоже, у нас такого нет"
 
 
 @allure.feature("Тестирование интернет-магазина")
-@allure.title("Позитивные тесты.UI")
-@allure.step("Удаление товара из корзины")
+@allure.story("Позитивные тесты.UI")
+@allure.title("Удаление товара из корзины")
 @allure.severity("BLOCKER")
-@pytest.mark.parametrize("book_name", ["Умная собачка Соня", "трое в лодке не считая собаки", "1984", "Sailor moon", "20 тысяч лье под водой"])
-def test_delete_from_cart(book_name):
-    with allure.step("Запустить браузер Chrome"):
-        driver = webdriver.Chrome()
-    with allure.step("Перейти на сайт Читай-город"):
-        ui_page = UiPage(driver, ui_url)
+@pytest.mark.parametrize("book_name", ["Умная собачка Соня",
+                                       "Дневник книготорговца",
+                                       "1984"])
+def test_delete_from_cart(browser, book_name):
+    with allure.step("Добавить книгу в корзину"):
+        browser.search_by_phrase(book_name)
+        browser.click_first_action_button()
+    with allure.step("Перейти в корзину и удалить книгу"):
+        browser.go_to_cart()
+        items_before = browser.get_cart_item_count()
+        browser.delete_from_cart()
+        items_after = browser.get_cart_item_count()
     with allure.step("Проверить, что товар больше не существует в списке"):
-        cart_items = driver.find_elements(By.CSS_SELECTOR, "cart-multiple-delete")
-        assert all(
-            book_name not in element.text for element in cart_items), f"Книга '{book_name}' еще в корзине"
-    with allure.step("Закрыть браузер"):
-        driver.quit()
+        assert items_before < items_after
