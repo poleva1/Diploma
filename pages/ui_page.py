@@ -31,6 +31,11 @@ class UiPage:
         elements = self._wait_for_elements(By.CSS_SELECTOR, css_selector, multiple=True)
         return [element.text for element in elements]
 
+    @allure.step("Проверяем заголовок страницы")
+    def check_page_title(self, expected_title):
+        WebDriverWait(self.driver, 10).until(lambda driver: driver.title != "")
+        return self.driver.title == expected_title
+
     @allure.step("Поиск книги по фразе: {phrase}")
     def search_by_phrase(self, phrase: str):
         search_input = self._wait_for_elements(By.CSS_SELECTOR, "input.header-search__input")
@@ -73,47 +78,3 @@ class UiPage:
         if match:
             return int(match.group(0))
         return 0
-
-    @allure.step("Удаление книги из корзины")
-    def delete_from_cart(self):
-        delete_buttons = self._wait_for_elements(
-            By.CSS_SELECTOR,'.cart-item__actions-button--delete', multiple=True)
-        if delete_buttons:
-            delete_buttons[0].click()
-            allure.step("Удалили первую книгу")
-        else:
-            raise Exception("Книг в корзине нет")
-
-
-    # @allure.step("Добавление в корзину")
-    # def add_to_cart(self, book_name: str):
-    #     search_box = WebDriverWait(self.driver, 10).until(
-    #         EC.presence_of_element_located((By.CSS_SELECTOR, "input.header-search__input"))
-    #     )
-    #     search_box.send_keys(book_name)
-    #     search_button = WebDriverWait(self.driver, 10).until(
-    #         EC.element_to_be_clickable((By.CSS_SELECTOR, "button[type='submit']"))
-    #     )
-    #     search_button.click()
-    #     buy_button = WebDriverWait(self.driver, 10).until(
-    #         EC.element_to_be_clickable((By.CSS_SELECTOR, "action-button__text=['Купить']"))
-    #     )
-    #     buy_button.click()
-    #     cart_icon = WebDriverWait(self.driver, 20).until(
-    #         EC.element_to_be_clickable((By.CSS_SELECTOR, "action-button__text=['Оформить']"))
-    #     )
-    #     cart_icon.click()
-    #
-    # @allure.step("Удаление из корзины")
-    # def delete_from_cart(self, book_name: str):
-    #     search_box = WebDriverWait(self.driver, 30).until(
-    #         EC.presence_of_element_located((By.CSS_SELECTOR, "data-chg-product-name"))
-    #     )
-    #     search_box.send_keys(book_name)
-    #     cart_icon = WebDriverWait(self.driver, 20).until(
-    #         EC.element_to_be_clickable((By.CSS_SELECTOR, "action-button__text=['Оформить']"))
-    #     )
-    #     cart_icon.click()
-    #     delete_button = WebDriverWait(self.driver, 10).until(
-    #         EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.delete-many')))
-    #     delete_button.click()

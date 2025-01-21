@@ -45,9 +45,9 @@ pytest Diploma -s -v (запуск всех тестов)
 
 pytest Diploma/Diploma/tests/test_ui.py (запуск только UI тестов) 
 
-pytest Diploma/Diploma/tests/test_api.py (запуск только API тестов) 
+ pytest Diploma/Diploma/tests/test_api.py (запуск только API тестов) 
 
-pytest --alluredir=allure-files (запустить тесты с Allure)
+pytest Diploma --alluredir=allure-files (запустить тесты с Allure)
 
 allure generate allure-files --clean -o allure-report (сформировать отчет о тестировании)
 
